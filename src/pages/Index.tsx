@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import heroBanner from "@/assets/hero-banner.jpg";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/adam-logo.svg";
 import mascotThinking from "@/assets/mascot-thinking.png";
 import mascotFabric from "@/assets/mascot-fabric.png";
 import { fabrics } from "@/data/fabrics";
