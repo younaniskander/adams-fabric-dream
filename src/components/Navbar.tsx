@@ -9,6 +9,7 @@ const navItems = [
   { label: "المعرض", path: "/gallery" },
   { label: "أقمشة محلية", path: "/gallery?category=local" },
   { label: "أقمشة مستوردة", path: "/gallery?category=imported" },
+  { label: "تسجيل بياناتك", path: "/register" },
   { label: "تواصل معنا", path: "/contact" },
 ];
 
