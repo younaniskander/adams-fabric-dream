@@ -28,6 +28,8 @@ const FabricDetail = () => {
 
   const typeName = fabricTypes.find((t) => t.id === fabric.type)?.name || fabric.type;
   const brandName = brands.find((b) => b.id === fabric.brand)?.name || fabric.brand;
+  const currentVariant = fabric.colorVariants?.[selectedColor];
+  const displayImage = currentVariant?.image || fabric.image;
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,34 +46,49 @@ const FabricDetail = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Image - Right side (RTL) */}
+          {/* Image */}
           <motion.div
             className="relative"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
             <div className="rounded-xl overflow-hidden shadow-fabric aspect-square">
-              <img
-                src={fabric.image}
-                alt={fabric.name}
+              <motion.img
+                key={selectedColor}
+                src={displayImage}
+                alt={`${fabric.name} - ${currentVariant?.name || ''}`}
                 className="w-full h-full object-cover"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
               />
             </div>
-            {/* Color swatches under image */}
-            <div className="flex items-center gap-2 mt-4">
-              <span className="text-xs text-muted-foreground font-body">الألوان المتاحة:</span>
-              {fabric.colors.map((color, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedColor(i)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === i ? "border-primary scale-110" : "border-border"}`}
-                  style={{ backgroundColor: color }}
-                />
-              ))}
+            {/* Color variant selector */}
+            <div className="mt-4 space-y-2">
+              <span className="text-xs text-muted-foreground font-body">اختر اللون:</span>
+              <div className="flex items-center gap-3 flex-wrap">
+                {fabric.colorVariants?.map((variant, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedColor(i)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all text-sm font-body ${
+                      selectedColor === i
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    <span
+                      className="w-5 h-5 rounded-full border border-border flex-shrink-0"
+                      style={{ backgroundColor: variant.color }}
+                    />
+                    {variant.name}
+                  </button>
+                ))}
+              </div>
             </div>
           </motion.div>
 
-          {/* Details - Left side (RTL) */}
+          {/* Details */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -95,7 +112,7 @@ const FabricDetail = () => {
               <div className="grid grid-cols-2 gap-y-3 text-sm font-body">
                 <SpecRow label="النوع" value={typeName} />
                 <SpecRow label="الماركة" value={brandName} />
-                <SpecRow label="التصنيف" value={fabric.category === "local" ? "محلي" : "مستورد"} />
+                <SpecRow label="التصنيف" value={fabric.category === "upholstery" ? "قماش تنجيد" : "مقاس ستائر"} />
                 <SpecRow label="المنشأ" value={fabric.origin} />
                 <SpecRow label="التركيب" value={fabric.composition} />
                 <SpecRow label="GSM" value={String(fabric.gsm)} />
@@ -141,7 +158,7 @@ const FabricDetail = () => {
 
             {/* Mascot tip */}
             <div className="mt-6 bg-muted rounded-xl p-4 flex items-center gap-4 flex-row-reverse">
-              <img src={mascotFabric} alt="نصيحة" className="w-16 h-16 object-contain flex-shrink-0" />
+              <img src={mascotFabric} alt="نصيحة" className="w-16 h-16 object-contain flex-shrink-0 mix-blend-multiply" />
               <p className="text-xs font-body text-muted-foreground text-right">
                 💡 هذا القماش مثالي لـ{fabric.usage[0]}! تواصل معنا للحصول على عينة مجانية.
               </p>

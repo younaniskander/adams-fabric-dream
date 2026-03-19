@@ -46,7 +46,7 @@ const Gallery = () => {
       <Navbar />
 
       <div className="container mx-auto px-4 py-10">
-        <SectionHeader title="معرض الأقمشة" subtitle="تصفح مجموعتنا الكاملة من الأقمشة الفاخرة" />
+        <SectionHeader title="معرض الأقمشة" subtitle="تصفح مجموعتنا الكاملة من أقمشة التنجيد والستائر" />
 
         {/* Search & Filter Bar */}
         <div className="flex items-center gap-3 mb-6">
@@ -84,7 +84,7 @@ const Gallery = () => {
             >
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-card rounded-lg p-4 border border-border">
                 <FilterSelect label="النوع" value={selectedType} onChange={setSelectedType} options={fabricTypes.map(t => ({ value: t.id, label: t.name }))} />
-                <FilterSelect label="التصنيف" value={selectedCategory} onChange={setSelectedCategory} options={[{ value: "local", label: "محلي" }, { value: "imported", label: "مستورد" }]} />
+                <FilterSelect label="التصنيف" value={selectedCategory} onChange={setSelectedCategory} options={[{ value: "upholstery", label: "قماش تنجيد" }, { value: "curtains", label: "مقاس ستائر" }]} />
                 <FilterSelect label="الماركة" value={selectedBrand} onChange={setSelectedBrand} options={brands.map(b => ({ value: b.id, label: b.name }))} />
                 <FilterSelect label="المنشأ" value={selectedOrigin} onChange={setSelectedOrigin} options={origins.map(o => ({ value: o, label: o }))} />
               </div>

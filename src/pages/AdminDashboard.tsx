@@ -1,21 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Users, Package, MessageSquare, Tag, LogOut, BarChart3, Plus, Trash2, Eye, EyeOff,
-  ChevronDown, ChevronUp, Star, TrendingUp, Sparkles
+  Star, Sparkles, Upload, Image as ImageIcon
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
 
 type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+
+const getPublicUrl = (bucket: string, path: string) =>
+  `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 
 const AdminDashboard = () => {
   const [tab, setTab] = useState<Tab>("stats");
@@ -69,7 +73,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-muted">
-      {/* Header */}
       <header className="bg-background border-b border-border px-4 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <img src={logo} alt="ADAM" className="w-10 h-10" />
@@ -80,7 +83,6 @@ const AdminDashboard = () => {
         </Button>
       </header>
 
-      {/* Tabs */}
       <div className="bg-background border-b border-border overflow-x-auto">
         <div className="container mx-auto px-4 flex gap-1">
           {tabs.map((t) => (
@@ -101,7 +103,6 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="container mx-auto px-4 py-6">
         {loading ? (
           <div className="text-center py-20 font-body text-muted-foreground">جاري التحميل...</div>
@@ -109,7 +110,7 @@ const AdminDashboard = () => {
           <>
             {tab === "stats" && <StatsTab customers={customers} messages={messages} fabrics={fabrics} brands={brands} />}
             {tab === "fabrics" && <FabricsTab fabrics={fabrics} brands={brands} onRefresh={fetchAll} />}
-            {tab === "customers" && <CustomersTab customers={customers} />}
+            {tab === "customers" && <CustomersTab customers={customers} onRefresh={fetchAll} />}
             {tab === "brands" && <BrandsTab brands={brands} onRefresh={fetchAll} />}
             {tab === "messages" && <MessagesTab messages={messages} onRefresh={fetchAll} />}
           </>
@@ -149,13 +150,70 @@ const StatsTab = ({ customers, messages, fabrics, brands }: any) => {
   );
 };
 
+// Image Upload Component
+const ImageUploader = ({ bucket, onUploaded, currentUrl }: { bucket: string; onUploaded: (url: string) => void; currentUrl?: string }) => {
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(currentUrl || null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const ext = file.name.split('.').pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from(bucket).upload(path, file);
+    if (error) {
+      setUploading(false);
+      return;
+    }
+    const url = getPublicUrl(bucket, path);
+    setPreview(url);
+    onUploaded(url);
+    setUploading(false);
+  };
+
+  return (
+    <div>
+      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+      {preview ? (
+        <div className="relative group">
+          <img src={preview} alt="Preview" className="w-full h-32 object-cover rounded-lg border border-border" />
+          <button
+            onClick={() => { setPreview(null); fileRef.current?.click(); }}
+            className="absolute inset-0 bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg"
+          >
+            <Upload className="text-primary-foreground" size={20} />
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="w-full h-32 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors"
+        >
+          {uploading ? (
+            <span className="font-body text-sm">جاري الرفع...</span>
+          ) : (
+            <>
+              <ImageIcon size={24} />
+              <span className="font-body text-xs">اضغط لرفع صورة</span>
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
+};
+
 // Fabrics Tab
 const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: any[]; onRefresh: () => void }) => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
-    name: "", name_en: "", type: "cotton", category: "local", brand: "",
+    name: "", name_en: "", type: "cotton", category: "upholstery", brand: "",
     origin: "", composition: "", gsm: "", price: "اطلب السعر",
     is_featured: false, is_new: false, is_popular: false, coming_soon: false,
+    image_url: "",
   });
   const { toast } = useToast();
 
@@ -178,13 +236,14 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
       is_new: form.is_new,
       is_popular: form.is_popular,
       coming_soon: form.coming_soon,
+      image_url: form.image_url || null,
     });
     if (error) {
       toast({ title: "خطأ", description: "فشل في إضافة القماش", variant: "destructive" });
     } else {
       toast({ title: "تم بنجاح", description: "تم إضافة القماش" });
       setShowForm(false);
-      setForm({ name: "", name_en: "", type: "cotton", category: "local", brand: "", origin: "", composition: "", gsm: "", price: "اطلب السعر", is_featured: false, is_new: false, is_popular: false, coming_soon: false });
+      setForm({ name: "", name_en: "", type: "cotton", category: "upholstery", brand: "", origin: "", composition: "", gsm: "", price: "اطلب السعر", is_featured: false, is_new: false, is_popular: false, coming_soon: false, image_url: "" });
       onRefresh();
     }
   };
@@ -225,8 +284,8 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
               <Select value={form.category} onValueChange={v => setForm({...form, category: v})}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="local">محلي</SelectItem>
-                  <SelectItem value="imported">مستورد</SelectItem>
+                  <SelectItem value="upholstery">قماش تنجيد</SelectItem>
+                  <SelectItem value="curtains">مقاس ستائر</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -235,6 +294,10 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
             <div><Label className="font-body text-sm">التركيب</Label><Input value={form.composition} onChange={e => setForm({...form, composition: e.target.value})} className="font-body" /></div>
             <div><Label className="font-body text-sm">GSM</Label><Input type="number" value={form.gsm} onChange={e => setForm({...form, gsm: e.target.value})} dir="ltr" /></div>
             <div><Label className="font-body text-sm">السعر</Label><Input value={form.price} onChange={e => setForm({...form, price: e.target.value})} className="font-body" /></div>
+            <div>
+              <Label className="font-body text-sm">صورة المنتج</Label>
+              <ImageUploader bucket="product-images" onUploaded={(url) => setForm({...form, image_url: url})} currentUrl={form.image_url || undefined} />
+            </div>
           </div>
           <div className="flex flex-wrap gap-6">
             <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.is_featured} onCheckedChange={v => setForm({...form, is_featured: v})} /> مميز</label>
@@ -254,6 +317,7 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
           <table className="w-full text-sm font-body">
             <thead className="bg-muted">
               <tr>
+                <th className="px-4 py-3 text-right">الصورة</th>
                 <th className="px-4 py-3 text-right">الاسم</th>
                 <th className="px-4 py-3 text-right">النوع</th>
                 <th className="px-4 py-3 text-right">الفئة</th>
@@ -265,9 +329,16 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
             <tbody>
               {fabrics.map((f: any) => (
                 <tr key={f.id} className="border-t border-border hover:bg-muted/50">
+                  <td className="px-4 py-3">
+                    {f.image_url ? (
+                      <img src={f.image_url} alt={f.name} className="w-12 h-12 rounded object-cover" />
+                    ) : (
+                      <div className="w-12 h-12 rounded bg-muted flex items-center justify-center"><ImageIcon size={16} className="text-muted-foreground" /></div>
+                    )}
+                  </td>
                   <td className="px-4 py-3">{f.name}</td>
                   <td className="px-4 py-3">{f.type}</td>
-                  <td className="px-4 py-3">{f.category === "local" ? "محلي" : "مستورد"}</td>
+                  <td className="px-4 py-3">{f.category === "upholstery" ? "قماش تنجيد" : f.category === "curtains" ? "مقاس ستائر" : f.category}</td>
                   <td className="px-4 py-3">{f.brand}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1 flex-wrap">
@@ -284,7 +355,7 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
                 </tr>
               ))}
               {fabrics.length === 0 && (
-                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">لا توجد أقمشة بعد</td></tr>
+                <tr><td colSpan={7} className="text-center py-8 text-muted-foreground">لا توجد أقمشة بعد</td></tr>
               )}
             </tbody>
           </table>
@@ -295,38 +366,65 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
 };
 
 // Customers Tab
-const CustomersTab = ({ customers }: { customers: any[] }) => (
-  <div className="space-y-4">
-    <h2 className="font-display text-xl text-foreground">العملاء المسجلين ({customers.length})</h2>
-    <div className="bg-card rounded-xl shadow-fabric overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm font-body">
-          <thead className="bg-muted">
-            <tr>
-              <th className="px-4 py-3 text-right">#</th>
-              <th className="px-4 py-3 text-right">الاسم</th>
-              <th className="px-4 py-3 text-right">الهاتف</th>
-              <th className="px-4 py-3 text-right">تاريخ التسجيل</th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.map((c: any, i: number) => (
-              <tr key={c.id} className="border-t border-border hover:bg-muted/50">
-                <td className="px-4 py-3">{i + 1}</td>
-                <td className="px-4 py-3 font-semibold">{c.name}</td>
-                <td className="px-4 py-3 dir-ltr" dir="ltr">{c.phone}</td>
-                <td className="px-4 py-3 text-muted-foreground">{new Date(c.created_at).toLocaleDateString("ar-EG")}</td>
+const CustomersTab = ({ customers, onRefresh }: { customers: any[]; onRefresh: () => void }) => {
+  const { toast } = useToast();
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+
+  const handleImageUpload = async (customerId: string, url: string) => {
+    setUploadingId(customerId);
+    const { error } = await supabase.from("customers").update({ image_url: url }).eq("id", customerId);
+    if (error) {
+      toast({ title: "خطأ", description: "فشل في تحديث الصورة", variant: "destructive" });
+    } else {
+      toast({ title: "تم تحديث الصورة" });
+      onRefresh();
+    }
+    setUploadingId(null);
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="font-display text-xl text-foreground">العملاء المسجلين ({customers.length})</h2>
+      <div className="bg-card rounded-xl shadow-fabric overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm font-body">
+            <thead className="bg-muted">
+              <tr>
+                <th className="px-4 py-3 text-right">#</th>
+                <th className="px-4 py-3 text-right">الصورة</th>
+                <th className="px-4 py-3 text-right">الاسم</th>
+                <th className="px-4 py-3 text-right">الهاتف</th>
+                <th className="px-4 py-3 text-right">تاريخ التسجيل</th>
               </tr>
-            ))}
-            {customers.length === 0 && (
-              <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">لا يوجد عملاء مسجلين بعد</td></tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {customers.map((c: any, i: number) => (
+                <tr key={c.id} className="border-t border-border hover:bg-muted/50">
+                  <td className="px-4 py-3">{i + 1}</td>
+                  <td className="px-4 py-3">
+                    <div className="w-12">
+                      <ImageUploader
+                        bucket="customer-images"
+                        onUploaded={(url) => handleImageUpload(c.id, url)}
+                        currentUrl={c.image_url || undefined}
+                      />
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 font-semibold">{c.name}</td>
+                  <td className="px-4 py-3 dir-ltr" dir="ltr">{c.phone}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{new Date(c.created_at).toLocaleDateString("ar-EG")}</td>
+                </tr>
+              ))}
+              {customers.length === 0 && (
+                <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">لا يوجد عملاء مسجلين بعد</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Brands Tab
 const BrandsTab = ({ brands, onRefresh }: { brands: any[]; onRefresh: () => void }) => {
