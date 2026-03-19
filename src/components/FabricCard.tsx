@@ -39,6 +39,12 @@ const FabricCard = ({ fabric }: FabricCardProps) => {
               </span>
             )}
           </div>
+          {/* Category badge */}
+          <div className="absolute bottom-3 left-3">
+            <span className="bg-background/80 backdrop-blur-sm text-foreground text-xs px-2 py-1 rounded font-body">
+              {fabric.category === "upholstery" ? "تنجيد" : "ستائر"}
+            </span>
+          </div>
         </div>
 
         {/* Info */}
@@ -46,7 +52,15 @@ const FabricCard = ({ fabric }: FabricCardProps) => {
           <h3 className="font-display text-lg text-foreground mb-1">{fabric.name}</h3>
           <p className="text-xs text-muted-foreground font-body mb-2">{fabric.brand} • {fabric.origin}</p>
           <div className="flex items-center gap-1.5 mb-2">
-            {fabric.colors.slice(0, 4).map((color, i) => (
+            {fabric.colorVariants?.slice(0, 5).map((variant, i) => (
+              <span
+                key={i}
+                className="w-5 h-5 rounded-full border border-border"
+                style={{ backgroundColor: variant.color }}
+                title={variant.name}
+              />
+            ))}
+            {(!fabric.colorVariants || fabric.colorVariants.length === 0) && fabric.colors.slice(0, 4).map((color, i) => (
               <span
                 key={i}
                 className="w-4 h-4 rounded-full border border-border"
