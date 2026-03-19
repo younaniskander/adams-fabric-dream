@@ -5,6 +5,8 @@ import heroBanner from "@/assets/hero-banner.jpg";
 import logo from "@/assets/adam-logo.svg";
 import mascotThinking from "@/assets/mascot-thinking.png";
 import mascotFabric from "@/assets/mascot-fabric.png";
+import categoryUpholstery from "@/assets/category-upholstery.jpg";
+import categoryCurtains from "@/assets/category-curtains.jpg";
 import { fabrics } from "@/data/fabrics";
 import FabricCard from "@/components/FabricCard";
 import SectionHeader from "@/components/SectionHeader";
@@ -15,9 +17,8 @@ import IntroLoader from "@/components/IntroLoader";
 import BrandMarquee from "@/components/BrandMarquee";
 
 const categoryCards = [
-  { label: "أقمشة محلية", desc: "أجود الأقمشة المصنعة محلياً", path: "/gallery?category=local", color: "gradient-teal" },
-  { label: "أقمشة مستوردة", desc: "أرقى الأقمشة العالمية", path: "/gallery?category=imported", color: "gradient-gold" },
-  { label: "تصفح الكل", desc: "استكشف مجموعتنا الكاملة", path: "/gallery", color: "bg-foreground" },
+  { label: "قماش تنجيد", desc: "أقمشة أنتريهات بألوان وخامات متنوعة", path: "/gallery?category=upholstery", image: categoryUpholstery },
+  { label: "مقاس ستائر", desc: "ستائر فاخرة بمقاسات وتصاميم مختلفة", path: "/gallery?category=curtains", image: categoryCurtains },
 ];
 
 const Index = () => {
@@ -56,7 +57,7 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            اكتشف أرقى الأقمشة المحلية والمستوردة بأعلى جودة
+            اكتشف أرقى أقمشة التنجيد والستائر بأعلى جودة
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
             <Link to="/gallery" className="gradient-teal inline-block rounded-lg px-8 py-3 font-body text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
@@ -74,16 +75,26 @@ const Index = () => {
         />
       </section>
 
+      {/* Category Cards with Images */}
       <section className="relative z-20 -mt-16 container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {categoryCards.map((card, i) => (
             <motion.div key={card.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 * i }}>
-              <Link to={card.path} className={`block rounded-lg p-6 text-primary-foreground transition-opacity hover:opacity-90 ${card.color}`}>
-                <h3 className="mb-1 font-display text-xl">{card.label}</h3>
-                <p className="font-body text-sm opacity-80">{card.desc}</p>
+              <Link to={card.path} className="group block relative rounded-xl overflow-hidden h-48 md:h-56">
+                <img src={card.image} alt={card.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-foreground/50 group-hover:bg-foreground/40 transition-colors" />
+                <div className="relative z-10 flex flex-col justify-end h-full p-6">
+                  <h3 className="mb-1 font-display text-2xl text-primary-foreground">{card.label}</h3>
+                  <p className="font-body text-sm text-primary-foreground/80">{card.desc}</p>
+                </div>
               </Link>
             </motion.div>
           ))}
+        </div>
+        <div className="mt-4 text-center">
+          <Link to="/gallery" className="inline-block bg-foreground text-background rounded-lg px-8 py-3 font-body text-sm font-semibold hover:opacity-90 transition-opacity">
+            تصفح الكل
+          </Link>
         </div>
       </section>
 
@@ -102,7 +113,7 @@ const Index = () => {
           <div className="text-right">
             <h3 className="mb-2 font-display text-xl text-foreground">💡 نصيحة من آدم</h3>
             <p className="font-body text-sm text-muted-foreground">
-              هل تعلم أن القطن المصري يُعتبر من أفخر أنواع القطن في العالم؟ يتميز بأليافه الطويلة التي تمنحه نعومة ومتانة استثنائية. جرّب مجموعتنا من القطن المصري الفاخر!
+              هل تعلم أن القطن المصري يُعتبر من أفخر أنواع القطن في العالم؟ يتميز بأليافه الطويلة التي تمنحه نعومة ومتانة استثنائية. جرّب مجموعتنا من أقمشة التنجيد القطنية!
             </p>
           </div>
         </motion.div>
