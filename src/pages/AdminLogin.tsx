@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/adam-logo.svg";
+import logo from "@/assets/logo.jpeg";
 
 const FIRST_ADMIN_EMAIL = "admin@adamfabrics.com";
 const FIRST_ADMIN_PASSWORD = "AdamAdmin#2026";

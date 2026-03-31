@@ -1,10 +1,7 @@
-import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import heroBanner from "@/assets/hero-banner.jpg";
-import logo from "@/assets/adam-logo.svg";
-import mascotThinking from "@/assets/mascot-thinking.png";
-import mascotFabric from "@/assets/mascot-fabric.png";
+import logo from "@/assets/logo.jpeg";
 import categoryUpholstery from "@/assets/category-upholstery.jpg";
 import categoryCurtains from "@/assets/category-curtains.jpg";
 import { fabrics } from "@/data/fabrics";
@@ -13,7 +10,6 @@ import SectionHeader from "@/components/SectionHeader";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
-import IntroLoader from "@/components/IntroLoader";
 import BrandMarquee from "@/components/BrandMarquee";
 
 const categoryCards = [
@@ -22,17 +18,9 @@ const categoryCards = [
 ];
 
 const Index = () => {
-  const [showIntro, setShowIntro] = useState(true);
-
   const featured = fabrics.filter((f) => f.isFeatured);
   const newArrivals = fabrics.filter((f) => f.isNew);
   const popular = fabrics.filter((f) => f.isPopular);
-
-  const handleIntroComplete = useCallback(() => setShowIntro(false), []);
-
-  if (showIntro) {
-    return <IntroLoader onComplete={handleIntroComplete} />;
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -64,15 +52,7 @@ const Index = () => {
               تصفح المعرض
             </Link>
           </motion.div>
-        </div>
-        <motion.img
-          src={mascotFabric}
-          alt="مرحباً"
-          className="absolute bottom-4 right-8 hidden w-28 object-contain mix-blend-multiply md:block md:w-36"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-        />
+      </div>
       </section>
 
       {/* Category Cards with Images */}
@@ -109,7 +89,6 @@ const Index = () => {
 
       <section className="container mx-auto px-4 py-8">
         <motion.div className="flex flex-row-reverse items-center gap-6 rounded-xl bg-muted p-6" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          <img src={mascotThinking} alt="نصيحة" className="h-24 w-24 flex-shrink-0 object-contain mix-blend-multiply" />
           <div className="text-right">
             <h3 className="mb-2 font-display text-xl text-foreground">💡 نصيحة من آدم</h3>
             <p className="font-body text-sm text-muted-foreground">

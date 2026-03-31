@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search } from "lucide-react";
-import logo from "@/assets/adam-logo.svg";
+import logo from "@/assets/logo.jpeg";
 
 const navItems = [
   { label: "الرئيسية", path: "/" },
