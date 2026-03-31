@@ -52,10 +52,7 @@ const Index = () => {
               تصفح المعرض
             </Link>
           </motion.div>
-        </div>
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-        />
+      </div>
       </section>
 
       {/* Category Cards with Images */}
