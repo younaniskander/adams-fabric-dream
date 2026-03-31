@@ -63,29 +63,6 @@ const FabricDetail = () => {
                 transition={{ duration: 0.3 }}
               />
             </div>
-            {/* Color variant selector */}
-            <div className="mt-4 space-y-2">
-              <span className="text-xs text-muted-foreground font-body">اختر اللون:</span>
-              <div className="flex items-center gap-3 flex-wrap">
-                {fabric.colorVariants?.map((variant, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedColor(i)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all text-sm font-body ${
-                      selectedColor === i
-                        ? "border-primary bg-primary/10 text-foreground"
-                        : "border-border bg-card text-muted-foreground hover:border-primary/50"
-                    }`}
-                  >
-                    <span
-                      className="w-5 h-5 rounded-full border border-border flex-shrink-0"
-                      style={{ backgroundColor: variant.color }}
-                    />
-                    {variant.name}
-                  </button>
-                ))}
-              </div>
-            </div>
           </motion.div>
 
           {/* Details */}
