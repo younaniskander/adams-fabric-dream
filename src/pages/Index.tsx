@@ -92,7 +92,6 @@ const Index = () => {
 
       <section className="container mx-auto px-4 py-8">
         <motion.div className="flex flex-row-reverse items-center gap-6 rounded-xl bg-muted p-6" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          <img src={mascotThinking} alt="نصيحة" className="h-24 w-24 flex-shrink-0 object-contain mix-blend-multiply" />
           <div className="text-right">
             <h3 className="mb-2 font-display text-xl text-foreground">💡 نصيحة من آدم</h3>
             <p className="font-body text-sm text-muted-foreground">
