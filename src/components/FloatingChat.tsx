@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { X } from "lucide-react";
-import mascot from "@/assets/mascot-happy-transparent.png";
+import { X, MessageCircle } from "lucide-react";
 
 const FloatingChat = () => {
   const [isOpen, setIsOpen] = useState(false);
