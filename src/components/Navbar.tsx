@@ -24,9 +24,9 @@ const Navbar = () => {
     <nav className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between md:h-20">
-          <button onClick={() => setIsOpen(!isOpen)} className="p-2 text-foreground md:hidden" aria-label="القائمة">
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <Link to="/gallery" className="p-2 text-muted-foreground transition-colors hover:text-primary" aria-label="ابحث في المعرض">
+            <Search size={20} />
+          </Link>
 
           <div className="hidden items-center gap-8 font-body text-sm md:flex">
             {navItems.map((item) => (
@@ -42,13 +42,14 @@ const Navbar = () => {
             ))}
           </div>
 
-          <Link to="/" className="flex items-center">
-            <img src={logo} alt="ADAM Fabrics" className="h-12 w-12 md:h-14 md:w-14 text-right" />
-          </Link>
-
-          <Link to="/gallery" className="p-2 text-muted-foreground transition-colors hover:text-primary" aria-label="ابحث في المعرض">
-            <Search size={20} />
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center">
+              <img src={logo} alt="ADAM Fabrics" className="h-12 w-12 md:h-14 md:w-14" />
+            </Link>
+            <button onClick={() => setIsOpen(!isOpen)} className="p-2 text-foreground md:hidden" aria-label="القائمة">
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
