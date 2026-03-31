@@ -158,7 +158,6 @@ const FabricDetail = () => {
 
             {/* Mascot tip */}
             <div className="mt-6 bg-muted rounded-xl p-4 flex items-center gap-4 flex-row-reverse">
-              <img src={mascotFabric} alt="نصيحة" className="w-16 h-16 object-contain flex-shrink-0 mix-blend-multiply" />
               <p className="text-xs font-body text-muted-foreground text-right">
                 💡 هذا القماش مثالي لـ{fabric.usage[0]}! تواصل معنا للحصول على عينة مجانية.
               </p>
