@@ -53,11 +53,6 @@ const Index = () => {
             </Link>
           </motion.div>
         </div>
-        <motion.img
-          src={mascotFabric}
-          alt="مرحباً"
-          className="absolute bottom-4 right-8 hidden w-28 object-contain mix-blend-multiply md:block md:w-36"
-          initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
         />
