@@ -1,10 +1,7 @@
-import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import heroBanner from "@/assets/hero-banner.jpg";
-import logo from "@/assets/adam-logo.svg";
-import mascotThinking from "@/assets/mascot-thinking.png";
-import mascotFabric from "@/assets/mascot-fabric.png";
+import logo from "@/assets/logo.jpeg";
 import categoryUpholstery from "@/assets/category-upholstery.jpg";
 import categoryCurtains from "@/assets/category-curtains.jpg";
 import { fabrics } from "@/data/fabrics";
@@ -13,7 +10,6 @@ import SectionHeader from "@/components/SectionHeader";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
-import IntroLoader from "@/components/IntroLoader";
 import BrandMarquee from "@/components/BrandMarquee";
 
 const categoryCards = [
@@ -22,17 +18,9 @@ const categoryCards = [
 ];
 
 const Index = () => {
-  const [showIntro, setShowIntro] = useState(true);
-
   const featured = fabrics.filter((f) => f.isFeatured);
   const newArrivals = fabrics.filter((f) => f.isNew);
   const popular = fabrics.filter((f) => f.isPopular);
-
-  const handleIntroComplete = useCallback(() => setShowIntro(false), []);
-
-  if (showIntro) {
-    return <IntroLoader onComplete={handleIntroComplete} />;
-  }
 
   return (
     <div className="min-h-screen bg-background">
