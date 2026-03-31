@@ -43,7 +43,7 @@ const Navbar = () => {
           </div>
 
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="ADAM Fabrics" className="h-12 w-12 md:h-14 md:w-14" />
+            <img src={logo} alt="ADAM Fabrics" className="h-12 w-12 md:h-14 md:w-14 text-right" />
           </Link>
 
           <Link to="/gallery" className="p-2 text-muted-foreground transition-colors hover:text-primary" aria-label="ابحث في المعرض">
