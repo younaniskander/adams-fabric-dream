@@ -6,7 +6,7 @@ import { fabrics, fabricTypes, brands } from "@/data/fabrics";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
-import mascotFabric from "@/assets/mascot-fabric.png";
+
 
 const FabricDetail = () => {
   const { id } = useParams();
