@@ -60,33 +60,18 @@ const About = () => {
 
         {/* About Content */}
         <section className="relative overflow-hidden border-b border-border bg-muted/40">
-          <div className="container mx-auto grid items-center gap-10 px-4 py-16 md:grid-cols-[1.2fr_0.8fr] md:py-24">
+          <div className="container mx-auto px-4 py-16 md:py-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-right"
+              className="text-right max-w-3xl mx-auto"
             >
               <p className="font-body text-xs uppercase tracking-[0.35em] text-muted-foreground">About Adam</p>
               <h2 className="mt-3 font-display text-3xl text-foreground md:text-5xl">قصتنا</h2>
-              <p className="mt-5 max-w-2xl font-body text-base leading-8 text-muted-foreground md:text-lg">
+              <p className="mt-5 font-body text-base leading-8 text-muted-foreground md:text-lg">
                 نحن نؤمن أن القماش الممتاز لا يُقاس بالمظهر فقط، بل بالإحساس، الأداء، وثقة العميل عند أول لمسة. لهذا نبني مجموعتنا على جودة حقيقية وشراكات موثوقة.
               </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="relative flex justify-center"
-            >
-              <div className="absolute inset-0 rounded-full bg-primary/10 blur-3xl" />
-              <img
-                src={mascotFabric}
-                alt="شخصية آدم للأقمشة"
-                className="relative z-10 w-64 max-w-full object-contain mix-blend-multiply md:w-80"
-              />
             </motion.div>
           </div>
         </section>

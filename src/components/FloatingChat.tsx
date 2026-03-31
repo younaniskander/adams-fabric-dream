@@ -41,7 +41,7 @@ const FloatingChat = () => {
         whileTap={{ scale: 0.95 }}
         aria-label="فتح المساعدة"
       >
-        <img src={mascot} alt="مساعد آدم" className="h-full w-full object-contain" />
+        <MessageCircle size={28} className="text-primary" />
       </motion.button>
     </div>
   );
