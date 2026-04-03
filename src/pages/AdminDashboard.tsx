@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Users, Package, MessageSquare, Tag, LogOut, BarChart3, Plus, Trash2, Eye, EyeOff,
-  Star, Sparkles, Upload, Image as ImageIcon
+  Star, Sparkles, Upload, Image as ImageIcon, Link as LinkIcon, Save
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo-nobg.png";
 
-type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages";
+type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages" | "social";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
@@ -27,6 +27,7 @@ const AdminDashboard = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
   const [fabrics, setFabrics] = useState<any[]>([]);
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -45,16 +46,18 @@ const AdminDashboard = () => {
 
   const fetchAll = async () => {
     setLoading(true);
-    const [c, m, b, f] = await Promise.all([
+    const [c, m, b, f, s] = await Promise.all([
       supabase.from("customers").select("*").order("created_at", { ascending: false }),
       supabase.from("messages").select("*").order("created_at", { ascending: false }),
       supabase.from("brands").select("*").order("created_at", { ascending: false }),
       supabase.from("fabrics_db").select("*").order("created_at", { ascending: false }),
+      supabase.from("social_links").select("*").order("created_at", { ascending: true }),
     ]);
     setCustomers(c.data || []);
     setMessages(m.data || []);
     setBrands(b.data || []);
     setFabrics(f.data || []);
+    setSocialLinks(s.data || []);
     setLoading(false);
   };
 
@@ -69,8 +72,8 @@ const AdminDashboard = () => {
     { id: "customers", label: "العملاء", icon: Users, count: customers.length },
     { id: "brands", label: "الماركات", icon: Tag, count: brands.length },
     { id: "messages", label: "الرسائل", icon: MessageSquare, count: messages.filter(m => !m.is_read).length },
+    { id: "social", label: "التواصل", icon: LinkIcon },
   ];
-
   return (
     <div className="min-h-screen bg-muted">
       <header className="bg-background border-b border-border px-4 py-3 flex items-center justify-between sticky top-0 z-30">
@@ -113,6 +116,7 @@ const AdminDashboard = () => {
             {tab === "customers" && <CustomersTab customers={customers} onRefresh={fetchAll} />}
             {tab === "brands" && <BrandsTab brands={brands} onRefresh={fetchAll} />}
             {tab === "messages" && <MessagesTab messages={messages} onRefresh={fetchAll} />}
+            {tab === "social" && <SocialTab socialLinks={socialLinks} onRefresh={fetchAll} />}
           </>
         )}
       </div>
@@ -534,6 +538,123 @@ const MessagesTab = ({ messages, onRefresh }: { messages: any[]; onRefresh: () =
         {messages.length === 0 && (
           <div className="text-center py-12 text-muted-foreground font-body">لا توجد رسائل</div>
         )}
+      </div>
+    </div>
+  );
+};
+
+// Social Links Tab
+const platformLabels: Record<string, string> = {
+  facebook: "فيسبوك", tiktok: "تيك توك", instagram: "انستجرام",
+  twitter: "تويتر", youtube: "يوتيوب", snapchat: "سناب شات", whatsapp: "واتساب",
+};
+
+const SocialTab = ({ socialLinks, onRefresh }: { socialLinks: any[]; onRefresh: () => void }) => {
+  const [links, setLinks] = useState<any[]>(socialLinks);
+  const [newPlatform, setNewPlatform] = useState("");
+  const [newUrl, setNewUrl] = useState("");
+  const { toast } = useToast();
+
+  useEffect(() => { setLinks(socialLinks); }, [socialLinks]);
+
+  const handleUpdate = async (id: string, field: string, value: any) => {
+    const updated = links.map(l => l.id === id ? { ...l, [field]: value } : l);
+    setLinks(updated);
+  };
+
+  const handleSave = async (link: any) => {
+    const { error } = await supabase.from("social_links").update({
+      url: link.url, is_active: link.is_active,
+    }).eq("id", link.id);
+    if (error) {
+      toast({ title: "خطأ", description: "فشل في الحفظ", variant: "destructive" });
+    } else {
+      toast({ title: "تم الحفظ" });
+      onRefresh();
+    }
+  };
+
+  const handleAdd = async () => {
+    if (!newPlatform.trim()) return;
+    const { error } = await supabase.from("social_links").insert({
+      platform: newPlatform.trim().toLowerCase(),
+      url: newUrl.trim(),
+      is_active: !!newUrl.trim(),
+    });
+    if (error) {
+      toast({ title: "خطأ", description: error.message.includes("unique") ? "هذه المنصة موجودة بالفعل" : "فشل في الإضافة", variant: "destructive" });
+    } else {
+      setNewPlatform(""); setNewUrl("");
+      toast({ title: "تم الإضافة" });
+      onRefresh();
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    await supabase.from("social_links").delete().eq("id", id);
+    toast({ title: "تم الحذف" });
+    onRefresh();
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="font-display text-xl text-foreground">إدارة روابط التواصل</h2>
+
+      <div className="flex flex-wrap gap-2 items-end">
+        <div>
+          <Label className="font-body text-sm">المنصة</Label>
+          <Select value={newPlatform} onValueChange={setNewPlatform}>
+            <SelectTrigger className="w-40"><SelectValue placeholder="اختر منصة" /></SelectTrigger>
+            <SelectContent>
+              {["facebook","instagram","tiktok","twitter","youtube","snapchat","whatsapp"].filter(
+                p => !links.some(l => l.platform === p)
+              ).map(p => (
+                <SelectItem key={p} value={p}>{platformLabels[p] || p}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex-1 min-w-[200px]">
+          <Label className="font-body text-sm">الرابط</Label>
+          <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://..." dir="ltr" />
+        </div>
+        <Button onClick={handleAdd} className="gradient-teal text-primary-foreground gap-2 font-body">
+          <Plus size={16} /> إضافة
+        </Button>
+      </div>
+
+      <div className="space-y-3">
+        {links.map((link) => (
+          <div key={link.id} className="bg-card rounded-xl p-4 shadow-fabric flex flex-wrap items-center gap-4">
+            <div className="font-body font-semibold text-foreground min-w-[100px]">
+              {platformLabels[link.platform] || link.platform}
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <Input
+                value={link.url}
+                onChange={e => handleUpdate(link.id, "url", e.target.value)}
+                placeholder="https://..."
+                dir="ltr"
+                className="font-body text-sm"
+              />
+            </div>
+            <label className="flex items-center gap-2 font-body text-sm">
+              <Switch
+                checked={link.is_active}
+                onCheckedChange={v => handleUpdate(link.id, "is_active", v)}
+              />
+              {link.is_active ? "نشط" : "قريباً"}
+            </label>
+            <div className="flex gap-1">
+              <Button variant="outline" size="sm" onClick={() => handleSave(link)} className="gap-1 font-body">
+                <Save size={14} /> حفظ
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => handleDelete(link.id)} className="text-destructive">
+                <Trash2 size={14} />
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
