@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import heroBanner from "@/assets/hero-banner.jpg";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo-nobg.png";
 import categoryUpholstery from "@/assets/category-upholstery.jpg";
 import categoryCurtains from "@/assets/category-curtains.jpg";
 import { fabrics } from "@/data/fabrics";
