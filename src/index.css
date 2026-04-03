@@ -15,7 +15,7 @@
     --popover: 40 33% 98%;
     --popover-foreground: 0 0% 18%;
 
-    --primary: 180 100% 25%;
+    --primary: 30 18% 25%;
     --primary-foreground: 40 33% 98%;
 
     --secondary: 40 20% 93%;
@@ -24,20 +24,20 @@
     --muted: 40 15% 93%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 43 74% 52%;
-    --accent-foreground: 0 0% 18%;
+    --accent: 30 25% 65%;
+    --accent-foreground: 0 0% 15%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 40 10% 90%;
     --input: 40 10% 90%;
-    --ring: 180 100% 25%;
+    --ring: 30 18% 25%;
 
     --radius: 0.75rem;
 
-    --gold: 43 74% 52%;
-    --gold-foreground: 0 0% 18%;
+    --gold: 30 25% 65%;
+    --gold-foreground: 0 0% 15%;
     --cream: 40 33% 98%;
     --charcoal: 0 0% 18%;
     --neutral: 0 0% 90%;
@@ -98,10 +98,10 @@
     box-shadow: 0 8px 30px -4px hsl(var(--foreground) / 0.15);
   }
   .gradient-gold {
-    background: linear-gradient(135deg, hsl(43 74% 52%), hsl(43 74% 62%));
+    background: linear-gradient(135deg, hsl(30 25% 65%), hsl(30 25% 75%));
   }
   .gradient-teal {
-    background: linear-gradient(135deg, hsl(180 100% 25%), hsl(180 80% 35%));
+    background: linear-gradient(135deg, hsl(30 18% 25%), hsl(30 18% 35%));
   }
   .marquee-track {
     animation: marquee-scroll 22s linear infinite;
