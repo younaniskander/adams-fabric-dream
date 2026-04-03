@@ -46,16 +46,18 @@ const AdminDashboard = () => {
 
   const fetchAll = async () => {
     setLoading(true);
-    const [c, m, b, f] = await Promise.all([
+    const [c, m, b, f, s] = await Promise.all([
       supabase.from("customers").select("*").order("created_at", { ascending: false }),
       supabase.from("messages").select("*").order("created_at", { ascending: false }),
       supabase.from("brands").select("*").order("created_at", { ascending: false }),
       supabase.from("fabrics_db").select("*").order("created_at", { ascending: false }),
+      supabase.from("social_links").select("*").order("created_at", { ascending: true }),
     ]);
     setCustomers(c.data || []);
     setMessages(m.data || []);
     setBrands(b.data || []);
     setFabrics(f.data || []);
+    setSocialLinks(s.data || []);
     setLoading(false);
   };
 
