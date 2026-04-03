@@ -543,4 +543,121 @@ const MessagesTab = ({ messages, onRefresh }: { messages: any[]; onRefresh: () =
   );
 };
 
+// Social Links Tab
+const platformLabels: Record<string, string> = {
+  facebook: "فيسبوك", tiktok: "تيك توك", instagram: "انستجرام",
+  twitter: "تويتر", youtube: "يوتيوب", snapchat: "سناب شات", whatsapp: "واتساب",
+};
+
+const SocialTab = ({ socialLinks, onRefresh }: { socialLinks: any[]; onRefresh: () => void }) => {
+  const [links, setLinks] = useState<any[]>(socialLinks);
+  const [newPlatform, setNewPlatform] = useState("");
+  const [newUrl, setNewUrl] = useState("");
+  const { toast } = useToast();
+
+  useEffect(() => { setLinks(socialLinks); }, [socialLinks]);
+
+  const handleUpdate = async (id: string, field: string, value: any) => {
+    const updated = links.map(l => l.id === id ? { ...l, [field]: value } : l);
+    setLinks(updated);
+  };
+
+  const handleSave = async (link: any) => {
+    const { error } = await supabase.from("social_links").update({
+      url: link.url, is_active: link.is_active,
+    }).eq("id", link.id);
+    if (error) {
+      toast({ title: "خطأ", description: "فشل في الحفظ", variant: "destructive" });
+    } else {
+      toast({ title: "تم الحفظ" });
+      onRefresh();
+    }
+  };
+
+  const handleAdd = async () => {
+    if (!newPlatform.trim()) return;
+    const { error } = await supabase.from("social_links").insert({
+      platform: newPlatform.trim().toLowerCase(),
+      url: newUrl.trim(),
+      is_active: !!newUrl.trim(),
+    });
+    if (error) {
+      toast({ title: "خطأ", description: error.message.includes("unique") ? "هذه المنصة موجودة بالفعل" : "فشل في الإضافة", variant: "destructive" });
+    } else {
+      setNewPlatform(""); setNewUrl("");
+      toast({ title: "تم الإضافة" });
+      onRefresh();
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    await supabase.from("social_links").delete().eq("id", id);
+    toast({ title: "تم الحذف" });
+    onRefresh();
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="font-display text-xl text-foreground">إدارة روابط التواصل</h2>
+
+      <div className="flex flex-wrap gap-2 items-end">
+        <div>
+          <Label className="font-body text-sm">المنصة</Label>
+          <Select value={newPlatform} onValueChange={setNewPlatform}>
+            <SelectTrigger className="w-40"><SelectValue placeholder="اختر منصة" /></SelectTrigger>
+            <SelectContent>
+              {["facebook","instagram","tiktok","twitter","youtube","snapchat","whatsapp"].filter(
+                p => !links.some(l => l.platform === p)
+              ).map(p => (
+                <SelectItem key={p} value={p}>{platformLabels[p] || p}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex-1 min-w-[200px]">
+          <Label className="font-body text-sm">الرابط</Label>
+          <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://..." dir="ltr" />
+        </div>
+        <Button onClick={handleAdd} className="gradient-teal text-primary-foreground gap-2 font-body">
+          <Plus size={16} /> إضافة
+        </Button>
+      </div>
+
+      <div className="space-y-3">
+        {links.map((link) => (
+          <div key={link.id} className="bg-card rounded-xl p-4 shadow-fabric flex flex-wrap items-center gap-4">
+            <div className="font-body font-semibold text-foreground min-w-[100px]">
+              {platformLabels[link.platform] || link.platform}
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <Input
+                value={link.url}
+                onChange={e => handleUpdate(link.id, "url", e.target.value)}
+                placeholder="https://..."
+                dir="ltr"
+                className="font-body text-sm"
+              />
+            </div>
+            <label className="flex items-center gap-2 font-body text-sm">
+              <Switch
+                checked={link.is_active}
+                onCheckedChange={v => handleUpdate(link.id, "is_active", v)}
+              />
+              {link.is_active ? "نشط" : "قريباً"}
+            </label>
+            <div className="flex gap-1">
+              <Button variant="outline" size="sm" onClick={() => handleSave(link)} className="gap-1 font-body">
+                <Save size={14} /> حفظ
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => handleDelete(link.id)} className="text-destructive">
+                <Trash2 size={14} />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default AdminDashboard;
