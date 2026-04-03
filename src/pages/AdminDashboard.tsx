@@ -72,7 +72,7 @@ const AdminDashboard = () => {
     { id: "customers", label: "العملاء", icon: Users, count: customers.length },
     { id: "brands", label: "الماركات", icon: Tag, count: brands.length },
     { id: "messages", label: "الرسائل", icon: MessageSquare, count: messages.filter(m => !m.is_read).length },
-  ];
+    { id: "social", label: "التواصل", icon: LinkIcon },
 
   return (
     <div className="min-h-screen bg-muted">
