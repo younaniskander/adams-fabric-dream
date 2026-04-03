@@ -98,10 +98,10 @@
     box-shadow: 0 8px 30px -4px hsl(var(--foreground) / 0.15);
   }
   .gradient-gold {
-    background: linear-gradient(135deg, hsl(43 74% 52%), hsl(43 74% 62%));
+    background: linear-gradient(135deg, hsl(30 25% 65%), hsl(30 25% 75%));
   }
   .gradient-teal {
-    background: linear-gradient(135deg, hsl(180 100% 25%), hsl(180 80% 35%));
+    background: linear-gradient(135deg, hsl(30 18% 25%), hsl(30 18% 35%));
   }
   .marquee-track {
     animation: marquee-scroll 22s linear infinite;
