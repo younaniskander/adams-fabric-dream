@@ -73,7 +73,7 @@ const AdminDashboard = () => {
     { id: "brands", label: "الماركات", icon: Tag, count: brands.length },
     { id: "messages", label: "الرسائل", icon: MessageSquare, count: messages.filter(m => !m.is_read).length },
     { id: "social", label: "التواصل", icon: LinkIcon },
-
+  ];
   return (
     <div className="min-h-screen bg-muted">
       <header className="bg-background border-b border-border px-4 py-3 flex items-center justify-between sticky top-0 z-30">
