@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo-nobg.png";
 
-type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages";
+type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages" | "social";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
