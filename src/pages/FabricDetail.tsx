@@ -52,17 +52,11 @@ const FabricDetail = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="rounded-xl overflow-hidden shadow-fabric aspect-square">
-              <motion.img
-                key={selectedColor}
-                src={displayImage}
-                alt={`${fabric.name} - ${currentVariant?.name || ''}`}
-                className="w-full h-full object-cover"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
+            <ImageZoom
+              key={selectedColor}
+              src={displayImage}
+              alt={`${fabric.name} - ${currentVariant?.name || ''}`}
+            />
           </motion.div>
 
           {/* Details */}
