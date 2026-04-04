@@ -68,11 +68,42 @@ const Navbar = () => {
     <nav className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between md:h-20">
-          <Link to="/gallery" className="p-2 text-muted-foreground transition-colors hover:text-primary" aria-label="ابحث في المعرض">
-            <Search size={20} />
-          </Link>
+          {/* Left side: Search + Nav items */}
+          <div className="hidden items-center gap-6 font-body text-sm md:flex">
+            {/* Expandable search */}
+            <div
+              ref={searchRef}
+              className="relative flex items-center"
+              onMouseEnter={() => setSearchExpanded(true)}
+              onMouseLeave={() => setSearchExpanded(false)}
+            >
+              <Link
+                to="/gallery"
+                className="p-2 text-muted-foreground transition-colors hover:text-primary"
+                aria-label="ابحث في المعرض"
+              >
+                <Search size={20} />
+              </Link>
+              <AnimatePresence>
+                {searchExpanded && (
+                  <motion.span
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: "auto", opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden whitespace-nowrap text-xs text-muted-foreground"
+                  >
+                    <Link to="/gallery" className="hover:text-primary transition-colors">
+                      ابحث في المعرض
+                    </Link>
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
 
-          <div className="hidden items-center gap-8 font-body text-sm md:flex">
+            <div className="h-4 w-px bg-border" />
+
+
             {/* Social dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
