@@ -86,7 +86,7 @@ const FabricDetail = () => {
                 <SpecRow label="التصنيف" value={fabric.category === "upholstery" ? "قماش تنجيد" : "مقاس ستائر"} />
                 <SpecRow label="المنشأ" value={fabric.origin} />
                 <SpecRow label="التركيب" value={fabric.composition} />
-                <SpecRow label="GSM" value={String(fabric.gsm)} />
+                
               </div>
             </div>
 
