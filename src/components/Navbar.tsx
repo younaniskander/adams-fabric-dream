@@ -41,7 +41,7 @@ const Navbar = () => {
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const location = useLocation();
-  const navigate = useNavigate();
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
