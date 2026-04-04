@@ -14,7 +14,7 @@ import BrandMarquee from "@/components/BrandMarquee";
 
 const categoryCards = [
   { label: "قماش تنجيد", desc: "أقمشة أنتريهات بألوان وخامات متنوعة", path: "/gallery?category=upholstery", image: categoryUpholstery },
-  { label: "مقاس ستائر", desc: "ستائر فاخرة بمقاسات وتصاميم مختلفة", path: "/gallery?category=curtains", image: categoryCurtains },
+  { label: "قماش ستائر", desc: "ستائر فاخرة بمقاسات وتصاميم مختلفة", path: "/gallery?category=curtains", image: categoryCurtains },
 ];
 
 const Index = () => {
