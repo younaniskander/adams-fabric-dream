@@ -21,6 +21,19 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const getPublicUrl = (bucket: string, path: string) =>
   `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 
+const getSignedUrl = async (bucket: string, path: string): Promise<string | null> => {
+  const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+  if (error || !data?.signedUrl) return null;
+  return data.signedUrl;
+};
+
+const getStorageUrl = async (bucket: string, path: string, isPrivate: boolean): Promise<string> => {
+  if (isPrivate) {
+    return (await getSignedUrl(bucket, path)) || '';
+  }
+  return getPublicUrl(bucket, path);
+};
+
 const AdminDashboard = () => {
   const [tab, setTab] = useState<Tab>("stats");
   const [customers, setCustomers] = useState<any[]>([]);
