@@ -162,6 +162,11 @@ const Navbar = () => {
             ))}
           </div>
 
+          {/* Mobile search */}
+          <Link to="/gallery" className="p-2 text-muted-foreground transition-colors hover:text-primary md:hidden" aria-label="ابحث في المعرض">
+            <Search size={20} />
+          </Link>
+
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center">
               <img src={logo} alt="ADAM Fabrics" className="h-12 w-12 md:h-14 md:w-14 text-right" />
