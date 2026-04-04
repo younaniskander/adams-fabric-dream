@@ -436,6 +436,7 @@ const CustomersTab = ({ customers, onRefresh }: { customers: any[]; onRefresh: (
                         bucket="customer-images"
                         onUploaded={(url) => handleImageUpload(c.id, url)}
                         currentUrl={c.image_url || undefined}
+                        isPrivate
                       />
                     </div>
                   </td>
