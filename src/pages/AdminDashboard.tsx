@@ -21,6 +21,19 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const getPublicUrl = (bucket: string, path: string) =>
   `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 
+const getSignedUrl = async (bucket: string, path: string): Promise<string | null> => {
+  const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+  if (error || !data?.signedUrl) return null;
+  return data.signedUrl;
+};
+
+const getStorageUrl = async (bucket: string, path: string, isPrivate: boolean): Promise<string> => {
+  if (isPrivate) {
+    return (await getSignedUrl(bucket, path)) || '';
+  }
+  return getPublicUrl(bucket, path);
+};
+
 const AdminDashboard = () => {
   const [tab, setTab] = useState<Tab>("stats");
   const [customers, setCustomers] = useState<any[]>([]);
@@ -155,10 +168,20 @@ const StatsTab = ({ customers, messages, fabrics, brands }: any) => {
 };
 
 // Image Upload Component
-const ImageUploader = ({ bucket, onUploaded, currentUrl }: { bucket: string; onUploaded: (url: string) => void; currentUrl?: string }) => {
+const ImageUploader = ({ bucket, onUploaded, currentUrl, isPrivate = false }: { bucket: string; onUploaded: (url: string) => void; currentUrl?: string; isPrivate?: boolean }) => {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentUrl || null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (currentUrl && isPrivate && currentUrl.includes('/object/public/')) {
+      // Re-resolve private URLs via signed URL
+      const path = currentUrl.split(`/storage/v1/object/public/${bucket}/`)[1];
+      if (path) {
+        getSignedUrl(bucket, path).then((signed) => { if (signed) setPreview(signed); });
+      }
+    }
+  }, [currentUrl, isPrivate, bucket]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -171,9 +194,11 @@ const ImageUploader = ({ bucket, onUploaded, currentUrl }: { bucket: string; onU
       setUploading(false);
       return;
     }
-    const url = getPublicUrl(bucket, path);
+    const url = isPrivate ? (await getSignedUrl(bucket, path)) || '' : getPublicUrl(bucket, path);
+    // Store the canonical path-based URL for the database
+    const dbUrl = getPublicUrl(bucket, path);
     setPreview(url);
-    onUploaded(url);
+    onUploaded(dbUrl);
     setUploading(false);
   };
 
@@ -411,6 +436,7 @@ const CustomersTab = ({ customers, onRefresh }: { customers: any[]; onRefresh: (
                         bucket="customer-images"
                         onUploaded={(url) => handleImageUpload(c.id, url)}
                         currentUrl={c.image_url || undefined}
+                        isPrivate
                       />
                     </div>
                   </td>
