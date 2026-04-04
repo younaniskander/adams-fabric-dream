@@ -38,9 +38,12 @@ type SocialLink = { id: string; platform: string; url: string; is_active: boolea
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const location = useLocation();
+  const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.from("social_links").select("*").then(({ data }) => {
