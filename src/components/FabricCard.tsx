@@ -69,7 +69,7 @@ const FabricCard = ({ fabric }: FabricCardProps) => {
             ))}
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground font-body">GSM: {fabric.gsm}</span>
+            <span className="text-xs text-muted-foreground font-body">{fabric.origin}</span>
             <span className="text-sm font-semibold text-primary font-body">{fabric.price}</span>
           </div>
         </div>

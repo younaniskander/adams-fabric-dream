@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
@@ -52,17 +52,11 @@ const FabricDetail = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="rounded-xl overflow-hidden shadow-fabric aspect-square">
-              <motion.img
-                key={selectedColor}
-                src={displayImage}
-                alt={`${fabric.name} - ${currentVariant?.name || ''}`}
-                className="w-full h-full object-cover"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
+            <ImageZoom
+              key={selectedColor}
+              src={displayImage}
+              alt={`${fabric.name} - ${currentVariant?.name || ''}`}
+            />
           </motion.div>
 
           {/* Details */}
@@ -92,7 +86,7 @@ const FabricDetail = () => {
                 <SpecRow label="التصنيف" value={fabric.category === "upholstery" ? "قماش تنجيد" : "مقاس ستائر"} />
                 <SpecRow label="المنشأ" value={fabric.origin} />
                 <SpecRow label="التركيب" value={fabric.composition} />
-                <SpecRow label="GSM" value={String(fabric.gsm)} />
+                
               </div>
             </div>
 
@@ -179,5 +173,46 @@ const SpecRow = ({ label, value }: { label: string; value: string }) => (
     <span className="text-foreground font-medium">{value}</span>
   </>
 );
+
+const ImageZoom = ({ src, alt }: { src: string; alt: string }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState(false);
+  const [position, setPosition] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setPosition({ x, y });
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="rounded-xl overflow-hidden shadow-fabric aspect-square cursor-crosshair relative"
+      onMouseEnter={() => setZoom(true)}
+      onMouseLeave={() => setZoom(false)}
+      onMouseMove={handleMouseMove}
+    >
+      <motion.img
+        src={src}
+        alt={alt}
+        className="w-full h-full object-cover transition-transform duration-200"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        style={
+          zoom
+            ? {
+                transform: "scale(2)",
+                transformOrigin: `${position.x}% ${position.y}%`,
+              }
+            : undefined
+        }
+      />
+    </div>
+  );
+};
 
 export default FabricDetail;
