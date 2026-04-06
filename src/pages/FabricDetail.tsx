@@ -166,14 +166,33 @@ const FabricDetail = () => {
               </div>
             </div>
 
+            {/* Price display */}
+            <div className="mb-6">
+              <span className="font-display text-2xl text-primary">{fabric.price}</span>
+            </div>
+
             {/* CTA */}
             <div className="flex gap-3">
               {/* Add to Cart */}
-              {fabric.price && fabric.price !== "اطلب السعر" ? (
-                <button
-                  onClick={() => {
-                    const priceNum = parseFloat(fabric.price.replace(/[^\d.]/g, ""));
-                    addItem({
+              <button
+                onClick={() => {
+                  addItem({
+                    id: fabric.id,
+                    name: fabric.name,
+                    nameEn: fabric.nameEn,
+                    image: displayImage,
+                    price: fabric.priceNum,
+                    priceDisplay: fabric.price,
+                    color: currentVariant?.color,
+                    colorName: currentVariant?.name,
+                  }, quantity);
+                  toast.success(lang === "ar" ? "تمت الإضافة للسلة" : "Added to cart");
+                }}
+                className="flex-1 bg-primary text-primary-foreground py-3 rounded-lg font-body font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+              >
+                <ShoppingBag size={18} />
+                {lang === "ar" ? "أضف للسلة" : "Add to Cart"}
+              </button>
                       id: fabric.id,
                       name: fabric.name,
                       nameEn: fabric.nameEn,
@@ -195,10 +214,10 @@ const FabricDetail = () => {
                 href="https://wa.me/966500000000"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${fabric.price && fabric.price !== "اطلب السعر" ? "" : "flex-1"} gradient-teal text-primary-foreground py-3 px-6 rounded-lg font-body font-semibold text-center text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2`}
+                className="gradient-teal text-primary-foreground py-3 px-6 rounded-lg font-body font-semibold text-center text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
               >
                 <MessageCircle size={18} />
-                {lang === "ar" ? "اطلب السعر عبر واتساب" : "Ask Price via WhatsApp"}
+                {lang === "ar" ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
               </a>
             </div>
 
