@@ -193,23 +193,6 @@ const FabricDetail = () => {
                 <ShoppingBag size={18} />
                 {lang === "ar" ? "أضف للسلة" : "Add to Cart"}
               </button>
-                      id: fabric.id,
-                      name: fabric.name,
-                      nameEn: fabric.nameEn,
-                      image: displayImage,
-                      price: priceNum,
-                      priceDisplay: fabric.price,
-                      color: currentVariant?.color,
-                      colorName: currentVariant?.name,
-                    }, quantity);
-                    toast.success(lang === "ar" ? "تمت الإضافة للسلة" : "Added to cart");
-                  }}
-                  className="flex-1 bg-primary text-primary-foreground py-3 rounded-lg font-body font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-                >
-                  <ShoppingBag size={18} />
-                  {lang === "ar" ? "أضف للسلة" : "Add to Cart"}
-                </button>
-              ) : null}
               <a
                 href="https://wa.me/966500000000"
                 target="_blank"
