@@ -72,7 +72,7 @@ const AdminLogin = () => {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="mb-8 text-center">
-          <img src={logo} alt="ADAM Fabrics" className="mx-auto mb-4 h-20 w-20" />
+          <img src={adamLogoBlack} alt="ADAM Fabrics" className="mx-auto mb-4 h-20 w-20" />
           <h1 className="font-display text-2xl text-foreground">لوحة تحكم المشرف</h1>
           <p className="mt-1 font-body text-sm text-muted-foreground">تسجيل دخول المشرف</p>
         </div>
