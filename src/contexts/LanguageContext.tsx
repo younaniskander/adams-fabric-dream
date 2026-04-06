@@ -83,6 +83,16 @@ const translations: Record<string, Record<Language, string>> = {
   "product.new": { ar: "جديد", en: "New" },
   "product.featured": { ar: "مميز", en: "Featured" },
   "product.comingSoon": { ar: "قريباً", en: "Coming Soon" },
+  "product.addedToCart": { ar: "تمت الإضافة للسلة", en: "Added to cart" },
+
+  // Cart
+  "cart.title": { ar: "سلة التسوق", en: "Shopping Cart" },
+  "cart.empty": { ar: "السلة فارغة", en: "Your cart is empty" },
+  "cart.total": { ar: "الإجمالي", en: "Total" },
+  "cart.checkout": { ar: "المتابعة إلى الدفع", en: "Proceed to Checkout" },
+  "cart.clear": { ar: "تفريغ السلة", en: "Clear Cart" },
+  "cart.redirecting": { ar: "جاري التحويل...", en: "Redirecting..." },
+  "cart.error": { ar: "حدث خطأ أثناء الدفع", en: "Checkout error occurred" },
 
   // Misc
   "misc.findUs": { ar: "أين تجدنا؟", en: "Where to Find Us?" },
