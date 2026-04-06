@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@/assets/adam-logo.svg";
+import logo from "@/assets/adam-logo-black.png";
 
 interface IntroLoaderProps {
   onComplete: () => void;
