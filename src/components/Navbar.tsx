@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search, ChevronDown, ShoppingBag, User, Globe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCart } from "@/contexts/CartContext";
 import logo from "@/assets/logo-nobg.png";
 
 const platformLabels: Record<string, Record<string, string>> = {
@@ -25,6 +26,7 @@ type SocialLink = { id: string; platform: string; url: string; is_active: boolea
 
 const Navbar = () => {
   const { lang, setLang, t } = useLanguage();
+  const { totalItems, setIsOpen: setCartOpen } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -143,12 +145,14 @@ const Navbar = () => {
               <User size={20} />
             </Link>
 
-            {/* Cart placeholder */}
-            <button className="relative p-2 text-muted-foreground transition-colors hover:text-primary" aria-label={t("nav.cart")}>
+            {/* Cart */}
+            <button onClick={() => setCartOpen(true)} className="relative p-2 text-muted-foreground transition-colors hover:text-primary" aria-label={t("nav.cart")}>
               <ShoppingBag size={20} />
-              <span className="absolute -top-0.5 -end-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                0
-              </span>
+              {totalItems > 0 && (
+                <span className="absolute -top-0.5 -end-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                  {totalItems}
+                </span>
+              )}
             </button>
 
             {/* Mobile menu */}
