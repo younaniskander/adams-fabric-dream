@@ -1,17 +1,23 @@
 import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, ShoppingBag, Plus, Minus } from "lucide-react";
 import { fabrics, fabricTypes, brands } from "@/data/fabrics";
+import { useCart } from "@/contexts/CartContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
+import { toast } from "sonner";
 
 
 const FabricDetail = () => {
   const { id } = useParams();
   const fabric = fabrics.find((f) => f.id === id);
   const [selectedColor, setSelectedColor] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const { addItem } = useCart();
+  const { lang } = useLanguage();
 
   if (!fabric) {
     return (
@@ -138,16 +144,61 @@ const FabricDetail = () => {
               </div>
             </div>
 
+            {/* Quantity selector */}
+            <div className="mb-6">
+              <span className="text-xs text-muted-foreground font-body mb-2 block">
+                {lang === "ar" ? "الكمية:" : "Quantity:"}
+              </span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary"
+                >
+                  <Minus size={16} />
+                </button>
+                <span className="text-lg font-body font-medium w-8 text-center">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+            </div>
+
             {/* CTA */}
             <div className="flex gap-3">
+              {/* Add to Cart */}
+              {fabric.price && fabric.price !== "اطلب السعر" ? (
+                <button
+                  onClick={() => {
+                    const priceNum = parseFloat(fabric.price.replace(/[^\d.]/g, ""));
+                    addItem({
+                      id: fabric.id,
+                      name: fabric.name,
+                      nameEn: fabric.nameEn,
+                      image: displayImage,
+                      price: priceNum,
+                      priceDisplay: fabric.price,
+                      color: currentVariant?.color,
+                      colorName: currentVariant?.name,
+                    }, quantity);
+                    toast.success(lang === "ar" ? "تمت الإضافة للسلة" : "Added to cart");
+                  }}
+                  className="flex-1 bg-primary text-primary-foreground py-3 rounded-lg font-body font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                >
+                  <ShoppingBag size={18} />
+                  {lang === "ar" ? "أضف للسلة" : "Add to Cart"}
+                </button>
+              ) : null}
               <a
                 href="https://wa.me/966500000000"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 gradient-teal text-primary-foreground py-3 rounded-lg font-body font-semibold text-center text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                className={`${fabric.price && fabric.price !== "اطلب السعر" ? "" : "flex-1"} gradient-teal text-primary-foreground py-3 px-6 rounded-lg font-body font-semibold text-center text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2`}
               >
                 <MessageCircle size={18} />
-                اطلب السعر عبر واتساب
+                {lang === "ar" ? "اطلب السعر عبر واتساب" : "Ask Price via WhatsApp"}
               </a>
             </div>
 
