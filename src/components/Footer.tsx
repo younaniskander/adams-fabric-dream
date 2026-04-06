@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import logo from "@/assets/logo-nobg.png";
+import adamLogoWhite from "@/assets/adam-logo-white.png";
 
 const Footer = () => {
   const { lang, t } = useLanguage();
@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-4 md:text-start">
           {/* Brand */}
           <div className="flex flex-col items-center gap-4 md:items-start">
-            <img src={logo} alt="ADAM Fabrics" className="h-16 w-16" />
+            <img src={adamLogoWhite} alt="ADAM Fabrics" className="h-16 object-contain" />
             <p className="max-w-xs font-body text-sm opacity-70">
               {t("footer.about")}
             </p>
@@ -24,7 +24,7 @@ const Footer = () => {
               <Link to="/" className="transition-opacity hover:opacity-100">{t("nav.home")}</Link>
               <Link to="/about" className="transition-opacity hover:opacity-100">{t("nav.about")}</Link>
               <Link to="/gallery" className="transition-opacity hover:opacity-100">{t("nav.gallery")}</Link>
-              <Link to="/register" className="transition-opacity hover:opacity-100">{t("nav.register")}</Link>
+              <Link to="/auth" className="transition-opacity hover:opacity-100">{lang === "ar" ? "حسابي" : "My Account"}</Link>
             </div>
           </div>
 

@@ -5,7 +5,8 @@ import { Menu, X, Search, ChevronDown, ShoppingBag, User, Globe } from "lucide-r
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCart } from "@/contexts/CartContext";
-import logo from "@/assets/logo-nobg.png";
+import { useAuth } from "@/contexts/AuthContext";
+import adamLogoBlack from "@/assets/adam-logo-black.png";
 
 const platformLabels: Record<string, Record<string, string>> = {
   facebook: { ar: "فيسبوك", en: "Facebook" },
@@ -27,6 +28,7 @@ type SocialLink = { id: string; platform: string; url: string; is_active: boolea
 const Navbar = () => {
   const { lang, setLang, t } = useLanguage();
   const { totalItems, setIsOpen: setCartOpen } = useCart();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -62,75 +64,8 @@ const Navbar = () => {
     <nav className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between md:h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="ADAM Fabrics" className="h-12 w-12 md:h-14 md:w-14" />
-          </Link>
-
-          {/* Center nav */}
-          <div className="hidden items-center gap-8 font-body text-sm md:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`transition-colors duration-200 hover:text-primary ${
-                  isActive(item.path) ? "text-primary font-semibold" : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-            {/* Social dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-primary"
-              >
-                {t("nav.contact")}
-                <ChevronDown size={14} className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-              </button>
-              <AnimatePresence>
-                {dropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="absolute start-0 top-full mt-2 w-48 rounded-xl border border-border bg-card p-2 shadow-lg"
-                  >
-                    {activeLinks.map((link) => (
-                      <a
-                        key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <span>{platformIcons[link.platform] || "🔗"}</span>
-                        {platformLabels[link.platform]?.[lang] || link.platform}
-                      </a>
-                    ))}
-                    {soonLinks.map((link) => (
-                      <div key={link.id} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground cursor-default">
-                        <span>{platformIcons[link.platform] || "🔗"}</span>
-                        {platformLabels[link.platform]?.[lang] || link.platform}
-                        <span className="ms-auto text-xs bg-muted px-1.5 py-0.5 rounded">{lang === "ar" ? "قريباً" : "Soon"}</span>
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Right actions */}
+          {/* Left actions */}
           <div className="flex items-center gap-3">
-            {/* Search */}
-            <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 text-muted-foreground transition-colors hover:text-primary"
-              aria-label={t("nav.search")}
-            >
-              <Search size={20} />
-            </button>
-
             {/* Language toggle */}
             <button
               onClick={() => setLang(lang === "ar" ? "en" : "ar")}
@@ -140,8 +75,82 @@ const Navbar = () => {
               {lang === "ar" ? "EN" : "عربي"}
             </button>
 
+            {/* Search */}
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              className="p-2 text-muted-foreground transition-colors hover:text-primary"
+              aria-label={t("nav.search")}
+            >
+              <Search size={20} />
+            </button>
+          </div>
+
+          {/* Center logo */}
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2 flex items-center">
+            <img src={adamLogoBlack} alt="ADAM Fabrics" className="h-12 md:h-14 object-contain" />
+          </Link>
+
+          {/* Right nav + actions */}
+          <div className="flex items-center gap-3">
+            {/* Desktop nav */}
+            <div className="hidden items-center gap-6 font-body text-sm md:flex">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`transition-colors duration-200 hover:text-primary ${
+                    isActive(item.path) ? "text-primary font-semibold" : "text-muted-foreground"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              {/* Social dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-primary"
+                >
+                  {t("nav.contact")}
+                  <ChevronDown size={14} className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="absolute end-0 top-full mt-2 w-48 rounded-xl border border-border bg-card p-2 shadow-lg"
+                    >
+                      {activeLinks.map((link) => (
+                        <a
+                          key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <span>{platformIcons[link.platform] || "🔗"}</span>
+                          {platformLabels[link.platform]?.[lang] || link.platform}
+                        </a>
+                      ))}
+                      {soonLinks.map((link) => (
+                        <div key={link.id} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground cursor-default">
+                          <span>{platformIcons[link.platform] || "🔗"}</span>
+                          {platformLabels[link.platform]?.[lang] || link.platform}
+                          <span className="ms-auto text-xs bg-muted px-1.5 py-0.5 rounded">{lang === "ar" ? "قريباً" : "Soon"}</span>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
             {/* User */}
-            <Link to="/admin-login" className="hidden p-2 text-muted-foreground transition-colors hover:text-primary md:block" aria-label={t("nav.signIn")}>
+            <Link
+              to={user ? "/profile" : "/auth"}
+              className="hidden p-2 text-muted-foreground transition-colors hover:text-primary md:block"
+              aria-label={t("nav.signIn")}
+            >
               <User size={20} />
             </Link>
 
@@ -212,8 +221,8 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
-              <Link to="/admin-login" onClick={() => setIsOpen(false)} className="py-2 text-sm text-muted-foreground">
-                {t("nav.signIn")}
+              <Link to={user ? "/profile" : "/auth"} onClick={() => setIsOpen(false)} className="py-2 text-sm text-muted-foreground">
+                {user ? (lang === "ar" ? "حسابي" : "My Account") : t("nav.signIn")}
               </Link>
               <div className="border-t border-border pt-3">
                 <p className="text-xs text-muted-foreground mb-2">{t("nav.contact")}</p>

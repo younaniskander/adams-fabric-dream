@@ -9,7 +9,7 @@ import fabricPolyester from "@/assets/fabric-polyester.jpg";
 export interface FabricColorVariant {
   name: string;
   color: string;
-  image?: string; // optional per-color image
+  image?: string;
 }
 
 export interface Fabric {
@@ -21,13 +21,14 @@ export interface Fabric {
   brand: string;
   image: string;
   colorVariants: FabricColorVariant[];
-  colors: string[]; // kept for backward compat
+  colors: string[];
   gsm: number;
   origin: string;
   composition: string;
   features: string[];
   usage: string[];
   price: string;
+  priceNum: number; // numeric price in EGP
   isFeatured?: boolean;
   isNew?: boolean;
   isPopular?: boolean;
@@ -78,7 +79,8 @@ export const fabrics: Fabric[] = [
     composition: "80% قطن، 20% حرير",
     features: ["فخم", "ناعم جداً", "غني اللون", "ثقيل ومتين"],
     usage: ["أنتريهات", "كنب", "كراسي صالون"],
-    price: "اطلب السعر",
+    price: "٤٥٠ ج.م/متر",
+    priceNum: 450,
     isFeatured: true,
     isPopular: true,
   },
@@ -102,7 +104,8 @@ export const fabrics: Fabric[] = [
     composition: "100% قطن مصري",
     features: ["متين", "سهل التنظيف", "مريح", "يتحمل الاستخدام اليومي"],
     usage: ["أنتريهات", "كنب يومي", "كراسي طعام"],
-    price: "اطلب السعر",
+    price: "٣٢٠ ج.م/متر",
+    priceNum: 320,
     isFeatured: true,
     isNew: true,
   },
@@ -126,7 +129,8 @@ export const fabrics: Fabric[] = [
     composition: "100% حرير طبيعي",
     features: ["لامع", "انسيابي", "خفيف الوزن", "أنيق"],
     usage: ["ستائر صالون", "ستائر غرف نوم", "ستائر مداخل"],
-    price: "اطلب السعر",
+    price: "٥٨٠ ج.م/متر",
+    priceNum: 580,
     isPopular: true,
   },
   {
@@ -149,7 +153,8 @@ export const fabrics: Fabric[] = [
     composition: "100% كتان طبيعي",
     features: ["صديق للبيئة", "متين", "يزداد نعومة مع الاستخدام", "عصري"],
     usage: ["أنتريهات مودرن", "كنب", "وسائد ديكور"],
-    price: "اطلب السعر",
+    price: "٣٨٠ ج.م/متر",
+    priceNum: 380,
     isNew: true,
   },
   {
@@ -172,7 +177,8 @@ export const fabrics: Fabric[] = [
     composition: "100% بوليستر ساتان",
     features: ["لامع", "ناعم", "مقاوم للتجاعيد", "يحجب الضوء"],
     usage: ["ستائر صالون فاخر", "ستائر غرف نوم", "ستائر بلاك أوت"],
-    price: "اطلب السعر",
+    price: "٤٢٠ ج.م/متر",
+    priceNum: 420,
     isFeatured: true,
   },
   {
@@ -195,7 +201,8 @@ export const fabrics: Fabric[] = [
     composition: "98% قطن، 2% إيلاستين",
     features: ["متين جداً", "مرن", "عملي", "سهل التنظيف"],
     usage: ["كنب عائلي", "كراسي مكتب", "بينز باج"],
-    price: "اطلب السعر",
+    price: "٢٨٠ ج.م/متر",
+    priceNum: 280,
     isPopular: true,
   },
   {
@@ -218,7 +225,8 @@ export const fabrics: Fabric[] = [
     composition: "100% بوليستر",
     features: ["خفيف", "سريع الجفاف", "مقاوم للتجاعيد", "اقتصادي"],
     usage: ["ستائر مطبخ", "ستائر شرفة", "فوال"],
-    price: "اطلب السعر",
+    price: "١٨٠ ج.م/متر",
+    priceNum: 180,
     isNew: true,
   },
 ];

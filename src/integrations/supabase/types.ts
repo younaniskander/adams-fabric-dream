@@ -152,6 +152,63 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          status: string
+          stripe_session_id: string | null
+          total_amount: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items?: Json
+          status?: string
+          stripe_session_id?: string | null
+          total_amount?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          status?: string
+          stripe_session_id?: string | null
+          total_amount?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       social_links: {
         Row: {
           created_at: string
@@ -193,6 +250,27 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlist: {
+        Row: {
+          created_at: string
+          fabric_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fabric_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fabric_id?: string
+          id?: string
           user_id?: string
         }
         Relationships: []
