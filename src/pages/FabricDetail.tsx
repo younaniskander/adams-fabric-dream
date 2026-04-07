@@ -22,10 +22,11 @@ const FabricDetail = () => {
   const { lang } = useLanguage();
 
   // Show free sample popup each time user navigates to a new fabric
-  useState(() => {
+  useEffect(() => {
+    setShowSamplePopup(false);
     const timer = setTimeout(() => setShowSamplePopup(true), 1200);
     return () => clearTimeout(timer);
-  });
+  }, [id]);
 
   if (!fabric) {
     return (
