@@ -59,7 +59,7 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://adams-fabric-dream.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
-      line_items: items.map((item) => {
+      line_items: paidItems.map((item) => {
         // Only include image if it's a valid absolute URL
         const hasValidImage = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"));
         return {
