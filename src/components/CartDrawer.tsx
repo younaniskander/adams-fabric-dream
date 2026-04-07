@@ -54,6 +54,7 @@ const CartDrawer = () => {
 
     setLoading(true);
     try {
+      await saveOrderToDb();
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           items: items.map((i) => ({
