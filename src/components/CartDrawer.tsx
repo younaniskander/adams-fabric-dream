@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,15 +10,47 @@ import { toast } from "sonner";
 const CartDrawer = () => {
   const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice, isOpen, setIsOpen } = useCart();
   const { lang, t } = useLanguage();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+
+  const saveOrderToDb = async () => {
+    if (!user) return;
+    try {
+      await supabase.from("orders").insert({
+        user_id: user.id,
+        items: items.map((i) => ({
+          name: lang === "ar" ? i.name : i.nameEn,
+          price: i.price,
+          quantity: i.quantity,
+          color: i.colorName || null,
+        })) as any,
+        total_amount: totalPrice,
+        status: totalPrice > 0 ? "pending" : "completed",
+      });
+    } catch (err) {
+      console.error("Failed to save order:", err);
+    }
+  };
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
 
+    if (!user) {
+      toast.error(
+        lang === "ar"
+          ? "يرجى تسجيل الدخول أولاً لإتمام الطلب"
+          : "Please sign in first to complete your order"
+      );
+      return;
+    }
+
     const paidItems = items.filter((i) => i.price > 0);
 
-    // If only free samples, no payment needed
+    // If only free samples, no payment needed but still save order
     if (paidItems.length === 0) {
+      setLoading(true);
+      await saveOrderToDb();
+      setLoading(false);
       toast.success(
         lang === "ar"
           ? "تم طلب العينات المجانية بنجاح! 🎉"
@@ -30,6 +63,7 @@ const CartDrawer = () => {
 
     setLoading(true);
     try {
+      await saveOrderToDb();
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           items: items.map((i) => ({
