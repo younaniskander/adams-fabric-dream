@@ -226,7 +226,7 @@ const FabricDetail = () => {
       <Footer />
       <FloatingChat />
 
-      {fabric && (
+      {fabric && showSamplePopup && (
         <FreeSamplePopup
           open={showSamplePopup}
           onClose={() => setShowSamplePopup(false)}
