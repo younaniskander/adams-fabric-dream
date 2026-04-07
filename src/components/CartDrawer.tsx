@@ -35,6 +35,15 @@ const CartDrawer = () => {
   const handleCheckout = async () => {
     if (items.length === 0) return;
 
+    if (!user) {
+      toast.error(
+        lang === "ar"
+          ? "يرجى تسجيل الدخول أولاً لإتمام الطلب"
+          : "Please sign in first to complete your order"
+      );
+      return;
+    }
+
     const paidItems = items.filter((i) => i.price > 0);
 
     // If only free samples, no payment needed but still save order
