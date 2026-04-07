@@ -49,17 +49,21 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://adams-fabric-dream.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
-      line_items: items.map((item) => ({
-        price_data: {
-          currency,
-          product_data: {
-            name: item.name,
-            ...(item.image ? { images: [item.image] } : {}),
+      line_items: items.map((item) => {
+        // Only include image if it's a valid absolute URL
+        const hasValidImage = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"));
+        return {
+          price_data: {
+            currency,
+            product_data: {
+              name: item.name,
+              ...(hasValidImage ? { images: [item.image] } : {}),
+            },
+            unit_amount: Math.round(item.price * 100),
           },
-          unit_amount: Math.round(item.price * 100), // convert to piastres
-        },
-        quantity: item.quantity,
-      })),
+          quantity: item.quantity,
+        };
+      }),
       mode: "payment",
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/gallery`,
