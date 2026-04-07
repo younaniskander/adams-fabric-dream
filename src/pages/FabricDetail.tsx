@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, ShoppingBag, Plus, Minus } from "lucide-react";
@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
+import FreeSamplePopup from "@/components/FreeSamplePopup";
 import { toast } from "sonner";
 
 
