@@ -37,8 +37,11 @@ const CartDrawer = () => {
 
     const paidItems = items.filter((i) => i.price > 0);
 
-    // If only free samples, no payment needed
+    // If only free samples, no payment needed but still save order
     if (paidItems.length === 0) {
+      setLoading(true);
+      await saveOrderToDb();
+      setLoading(false);
       toast.success(
         lang === "ar"
           ? "تم طلب العينات المجانية بنجاح! 🎉"
