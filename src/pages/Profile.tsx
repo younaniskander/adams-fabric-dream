@@ -34,7 +34,7 @@ const Profile = () => {
   useEffect(() => {
     if (!user) return;
     // Load profile
-    supabase.from("profiles").select("full_name, phone").eq("id", user.id).single().then(({ data }) => {
+    supabase.from("profiles").select("full_name, phone").eq("id", user.id).maybeSingle().then(({ data }) => {
       if (data) setProfile({ full_name: data.full_name || "", phone: data.phone || "" });
     });
     // Load orders
