@@ -225,6 +225,19 @@ const FabricDetail = () => {
 
       <Footer />
       <FloatingChat />
+
+      {fabric && (
+        <FreeSamplePopup
+          open={showSamplePopup}
+          onClose={() => setShowSamplePopup(false)}
+          fabric={{
+            id: fabric.id,
+            name: fabric.name,
+            nameEn: fabric.nameEn,
+            image: fabric.image,
+          }}
+        />
+      )}
     </div>
   );
 };
