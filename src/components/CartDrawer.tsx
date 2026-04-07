@@ -10,7 +10,27 @@ import { toast } from "sonner";
 const CartDrawer = () => {
   const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice, isOpen, setIsOpen } = useCart();
   const { lang, t } = useLanguage();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+
+  const saveOrderToDb = async () => {
+    if (!user) return;
+    try {
+      await supabase.from("orders").insert({
+        user_id: user.id,
+        items: items.map((i) => ({
+          name: lang === "ar" ? i.name : i.nameEn,
+          price: i.price,
+          quantity: i.quantity,
+          color: i.colorName || null,
+        })) as any,
+        total_amount: totalPrice,
+        status: totalPrice > 0 ? "pending" : "completed",
+      });
+    } catch (err) {
+      console.error("Failed to save order:", err);
+    }
+  };
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
