@@ -32,9 +32,19 @@ serve(async (req) => {
       });
     }
 
-    // Validate each item
-    for (const item of items) {
-      if (!item.name || typeof item.price !== "number" || item.price <= 0 || !item.quantity || item.quantity <= 0) {
+    // Filter out free items (e.g. free samples) — Stripe can't process $0 items
+    const paidItems = items.filter((item) => item.price > 0);
+
+    if (paidItems.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "No paid items in cart. Free samples don't require payment." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate each paid item
+    for (const item of paidItems) {
+      if (!item.name || !item.quantity || item.quantity <= 0) {
         return new Response(
           JSON.stringify({ error: `Invalid item: ${JSON.stringify(item)}` }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -49,7 +59,7 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://adams-fabric-dream.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
-      line_items: items.map((item) => {
+      line_items: paidItems.map((item) => {
         // Only include image if it's a valid absolute URL
         const hasValidImage = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"));
         return {
