@@ -13,6 +13,21 @@ const CartDrawer = () => {
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
+
+    const paidItems = items.filter((i) => i.price > 0);
+
+    // If only free samples, no payment needed
+    if (paidItems.length === 0) {
+      toast.success(
+        lang === "ar"
+          ? "تم طلب العينات المجانية بنجاح! 🎉"
+          : "Free samples ordered successfully! 🎉"
+      );
+      clearCart();
+      setIsOpen(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
