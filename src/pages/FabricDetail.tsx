@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, ShoppingBag, Plus, Minus } from "lucide-react";
@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
+import FreeSamplePopup from "@/components/FreeSamplePopup";
 import { toast } from "sonner";
 
 
@@ -16,8 +17,16 @@ const FabricDetail = () => {
   const fabric = fabrics.find((f) => f.id === id);
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [showSamplePopup, setShowSamplePopup] = useState(false);
   const { addItem } = useCart();
   const { lang } = useLanguage();
+
+  // Show free sample popup each time user navigates to a new fabric
+  useEffect(() => {
+    setShowSamplePopup(false);
+    const timer = setTimeout(() => setShowSamplePopup(true), 1200);
+    return () => clearTimeout(timer);
+  }, [id]);
 
   if (!fabric) {
     return (
@@ -216,6 +225,19 @@ const FabricDetail = () => {
 
       <Footer />
       <FloatingChat />
+
+      {fabric && (
+        <FreeSamplePopup
+          open={showSamplePopup}
+          onClose={() => setShowSamplePopup(false)}
+          fabric={{
+            id: fabric.id,
+            name: fabric.name,
+            nameEn: fabric.nameEn,
+            image: fabric.image,
+          }}
+        />
+      )}
     </div>
   );
 };
