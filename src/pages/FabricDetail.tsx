@@ -16,8 +16,15 @@ const FabricDetail = () => {
   const fabric = fabrics.find((f) => f.id === id);
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [showSamplePopup, setShowSamplePopup] = useState(false);
   const { addItem } = useCart();
   const { lang } = useLanguage();
+
+  // Show free sample popup each time user navigates to a new fabric
+  useState(() => {
+    const timer = setTimeout(() => setShowSamplePopup(true), 1200);
+    return () => clearTimeout(timer);
+  });
 
   if (!fabric) {
     return (
