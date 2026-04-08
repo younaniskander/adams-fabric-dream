@@ -12,6 +12,7 @@ import CategoryCircles from "@/components/CategoryCircles";
 import FeaturesBar from "@/components/FeaturesBar";
 import CollectionBanners from "@/components/CollectionBanners";
 import SectionHeader from "@/components/SectionHeader";
+import UpholsteryIntro from "@/components/UpholsteryIntro";
 
 const Index = () => {
   const { t } = useLanguage();
