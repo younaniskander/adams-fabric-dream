@@ -14,6 +14,8 @@ interface LineItem {
   image?: string;
 }
 
+const FREE_SAMPLE_COUPON_ID = "M2GxWeE3";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -32,18 +34,8 @@ serve(async (req) => {
       });
     }
 
-    // Filter out free items (e.g. free samples) — Stripe can't process $0 items
-    const paidItems = items.filter((item) => item.price > 0);
-
-    if (paidItems.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No paid items in cart. Free samples don't require payment." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Validate each paid item
-    for (const item of paidItems) {
+    // Validate each item
+    for (const item of items) {
       if (!item.name || !item.quantity || item.quantity <= 0) {
         return new Response(
           JSON.stringify({ error: `Invalid item: ${JSON.stringify(item)}` }),
@@ -58,26 +50,54 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://adams-fabric-dream.lovable.app";
 
-    const session = await stripe.checkout.sessions.create({
-      line_items: paidItems.map((item) => {
-        // Only include image if it's a valid absolute URL
-        const hasValidImage = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"));
-        return {
-          price_data: {
-            currency,
-            product_data: {
-              name: item.name,
-              ...(hasValidImage ? { images: [item.image] } : {}),
+    const paidItems = items.filter((item) => item.price > 0);
+    const freeItems = items.filter((item) => item.price <= 0);
+    const allFree = paidItems.length === 0;
+
+    // For free-only orders, assign a nominal price (1 EGP) and apply 100% coupon
+    const lineItems = allFree
+      ? freeItems.map((item) => {
+          const hasValidImage = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"));
+          return {
+            price_data: {
+              currency,
+              product_data: {
+                name: `${item.name} (عينة مجانية)`,
+                ...(hasValidImage ? { images: [item.image] } : {}),
+              },
+              unit_amount: 100, // 1 EGP nominal price, will be discounted to 0
             },
-            unit_amount: Math.round(item.price * 100),
-          },
-          quantity: item.quantity,
-        };
-      }),
+            quantity: item.quantity,
+          };
+        })
+      : items.filter((i) => i.price > 0).map((item) => {
+          const hasValidImage = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"));
+          return {
+            price_data: {
+              currency,
+              product_data: {
+                name: item.name,
+                ...(hasValidImage ? { images: [item.image] } : {}),
+              },
+              unit_amount: Math.round(item.price * 100),
+            },
+            quantity: item.quantity,
+          };
+        });
+
+    const sessionParams: any = {
+      line_items: lineItems,
       mode: "payment",
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/gallery`,
-    });
+    };
+
+    // Apply 100% coupon for free-only orders
+    if (allFree) {
+      sessionParams.discounts = [{ coupon: FREE_SAMPLE_COUPON_ID }];
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
