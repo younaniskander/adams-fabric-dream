@@ -90,6 +90,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Upholstery Intro */}
+      <UpholsteryIntro />
+
       {/* Collections */}
       <CollectionBanners />
 
