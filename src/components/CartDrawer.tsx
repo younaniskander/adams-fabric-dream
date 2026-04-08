@@ -44,23 +44,7 @@ const CartDrawer = () => {
       return;
     }
 
-    const paidItems = items.filter((i) => i.price > 0);
-
-    // If only free samples, no payment needed but still save order
-    if (paidItems.length === 0) {
-      setLoading(true);
-      await saveOrderToDb();
-      setLoading(false);
-      toast.success(
-        lang === "ar"
-          ? "تم طلب العينات المجانية بنجاح! 🎉"
-          : "Free samples ordered successfully! 🎉"
-      );
-      clearCart();
-      setIsOpen(false);
-      return;
-    }
-
+    // All items (including free samples) go through Stripe checkout
     setLoading(true);
     try {
       await saveOrderToDb();
